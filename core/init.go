@@ -7,8 +7,10 @@ package core
  */
 
 import (
+	"encoding/gob"
 	"github.com/gorilla/sessions"
 	"gopkg.in/pg.v3"
+	"net/http"
 )
 
 // 全局变量
@@ -22,6 +24,7 @@ var (
 const (
 	SessionName = "JSESSIONID"                                                //模拟JSP名称
 	sessionSeed = "UkFCRUFBQVZfLUNBQUVHYzNSeWFXNW5EQXNBQ1hWelpYSmZjMlZ6Y3dvc" // CookieStore Session的初始KeyPairs
+	UserSId     = "UserId"
 
 	DB_User = "hebl"
 	DB_Name = "test2"
@@ -30,10 +33,16 @@ const (
 // 初始化
 
 func init() {
-	Db := pg.Connect(&pg.Options{
+	db = pg.Connect(&pg.Options{
 		User:     DB_User,
 		Database: DB_Name,
 	})
+
+	SessionStore = sessions.NewCookieStore([]byte(sessionSeed))
+	gob.Register(&User{}) //注册User模型
+
+	//
+	TplPath = "templates"
 }
 
 // 改编自 https://github.com/achun/typepress/blob/master/src/global/global.go
@@ -41,7 +50,6 @@ func init() {
 func GetSession(r *http.Request) (*sessions.Session, error) {
 	sess, err := SessionStore.Get(r, SessionName)
 	if err != nil { // 如果无，则新建Session Cookie
-		r.Header.Del("Cookie")
 		sess, err = NewSession(r)
 	}
 	return sess, err
@@ -51,15 +59,22 @@ func GetSession(r *http.Request) (*sessions.Session, error) {
 func NewSession(r *http.Request) (*sessions.Session, error) {
 	sess, err := SessionStore.New(r, SessionName)
 	if err != nil {
-		r.Header.Del("Cookie")
 		sess, err = SessionStore.New(r, SessionName)
 	}
 	sess.Options.HttpOnly = true
 	sess.Options.MaxAge = 86400 * 14 // 两周
+
 	return sess, err
 }
 
 // SaveSession
-func SaveSession(r *http.Request, wr http.ResponseWriter, sess *sessions.Session) error {
-	return sess.Save(r, wr)
+func SaveSession(r *http.Request, w http.ResponseWriter, sess *sessions.Session) error {
+	return sess.Save(r, w)
+}
+
+// DeleteSession
+func DeleteSession(r *http.Request, w http.ResponseWriter, sess *sessions.Session) error {
+	sess.Options.MaxAge = -1
+
+	return sess.Save(r, w)
 }
