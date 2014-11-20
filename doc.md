@@ -19,9 +19,9 @@
 
 - `main.go` 主程序
 - `core` 程序目录
-  * `global.go` 全局变量、常量
+  * `init.go` 全局变量、常量
   * `db.go` 数据库模型与操作
-  * `controller` 控制器、过滤器等
+  * `controller.go` 控制器、过滤器等
   * `view.go` 输出渲染
   * `utils.go` 工具类
 - `templates` HTML模板目录
