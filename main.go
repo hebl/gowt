@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/gorilla/mux"
-	. "github.com/hebl/Go-Web-Template/core"
+	. "github.com/hebl/gowt/core"
 	"log"
 	"net/http"
 )
