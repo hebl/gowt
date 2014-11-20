@@ -1,7 +1,7 @@
 package core
 
 import (
-	"fmt"
+	//"fmt"
 	//"github.com/gorilla/mux"
 	"net/http"
 )
@@ -27,15 +27,15 @@ func Home(w http.ResponseWriter, r *http.Request) {
 	sess, _ := GetSession(r)
 
 	user := sess.Values[UserSId]
-	fmt.Fprintln(w, user)
+	RenderHtml(w, "index", user)
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
-
+	RenderHtml(w, "login", nil)
 }
 
 func Register(w http.ResponseWriter, r *http.Request) {
-
+	RenderHtml(w, "reg", nil)
 }
 
 func Logout(w http.ResponseWriter, r *http.Request) {
@@ -44,5 +44,11 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 }
 
 func UserCenter(w http.ResponseWriter, r *http.Request) {
+	RenderHtml(w, "uc", nil)
+}
 
+// 404
+func NotFoundHandler(w http.ResponseWriter, r *http.Request) {
+
+	RenderHtml(w, "404", nil)
 }

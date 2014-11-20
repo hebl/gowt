@@ -42,7 +42,7 @@ func init() {
 	gob.Register(&User{}) //注册User模型
 
 	//
-	TplPath = "templates"
+	TplPath = "templates/layout.html"
 }
 
 // 改编自 https://github.com/achun/typepress/blob/master/src/global/global.go
