@@ -16,7 +16,7 @@ func FilterHandler(f func(http.ResponseWriter, *http.Request)) http.HandlerFunc 
 		user := sess.Values[UserSId]
 
 		if user == nil { //用户未登录
-			Login(w, r)
+			http.Redirect(w, r, "/login", 302)
 		} else {
 			f(w, r)
 		}
