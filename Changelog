@@ -1,0 +1,4 @@
+2014-11-21  HE Boliang <hebl@hebl.org>
+
+    * version 0.1
+    * 简单的实现，使用多个全局变量(数据库、控制器等)进行控制和管理，简单的MVC，静态资源(css, js)使用nginx。
