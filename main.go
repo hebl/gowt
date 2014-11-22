@@ -1,24 +1,20 @@
 package main
 
 import (
-	"github.com/gorilla/mux"
+	//"github.com/gorilla/mux"
 	. "github.com/hebl/gowt/core"
 	"log"
 	"net/http"
 )
 
 func main() {
-	r := mux.NewRouter()
 
-	r.HandleFunc("/", FilterHandler(Home))
-	r.HandleFunc("/login", Login)
-	r.HandleFunc("/logout", FilterHandler(Logout))
-	r.HandleFunc("/uc", FilterHandler(UserCenter))
-	r.HandleFunc("/reg", FilterHandler(Register))
+	wtapp := NewWTApp()
+	wtapp.SetupRoute()
 
-	http.Handle("/", r)
+	http.Handle("/", wtapp)
 
-	err := http.ListenAndServe(":9090", r)
+	err := http.ListenAndServe(":9090", nil)
 
 	if err != nil {
 		log.Fatal(err)
