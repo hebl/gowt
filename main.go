@@ -14,6 +14,9 @@ func main() {
 
 	http.Handle("/", wtapp)
 
+	http.Handle("/assets/",
+		http.StripPrefix("/assets/", http.FileServer(http.Dir("assets"))))
+
 	err := http.ListenAndServe(":9090", nil)
 
 	if err != nil {
