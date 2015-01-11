@@ -14,14 +14,19 @@ import (
 )
 
 type WTApp struct {
-	Router       *mux.Router
-	SessionStore *sessions.CookieStore
+	Router *mux.Router
+}
+
+type WTContext struct {
+	user    User
+	session *sessions.Session
+	res     http.ResponseWriter
+	rep     *http.Request
 }
 
 func NewWTApp() *WTApp {
 	app := &WTApp{
-		Router:       mux.NewRouter(),
-		SessionStore: sessions.NewCookieStore([]byte(sessionSeed)),
+		Router: mux.NewRouter(),
 	}
 
 	return app
@@ -40,7 +45,7 @@ func (app *WTApp) SetupRoute() {
 }
 
 func (app *WTApp) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	sess, _ := app.GetSession(r)
+	sess, _ := GetSession(r)
 	csrf_token, ok := sess.Values["csrf_token"]
 
 	if !ok {
@@ -61,19 +66,19 @@ func (app *WTApp) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 // 改编自 https://github.com/achun/typepress/blob/master/src/global/global.go
 // 获取Session
-func (app *WTApp) GetSession(r *http.Request) (*sessions.Session, error) {
-	sess, err := app.SessionStore.Get(r, SessionName)
+func GetSession(r *http.Request) (*sessions.Session, error) {
+	sess, err := SessionStore.Get(r, SessionName)
 	if err != nil { // 如果无，则新建Session Cookie
-		sess, err = app.NewSession(r)
+		sess, err = NewSession(r)
 	}
 	return sess, err
 }
 
 // NewSession
-func (app *WTApp) NewSession(r *http.Request) (*sessions.Session, error) {
-	sess, err := app.SessionStore.New(r, SessionName)
+func NewSession(r *http.Request) (*sessions.Session, error) {
+	sess, err := SessionStore.New(r, SessionName)
 	if err != nil {
-		sess, err = app.SessionStore.New(r, SessionName)
+		sess, err = SessionStore.New(r, SessionName)
 	}
 	sess.Options.HttpOnly = true
 	sess.Options.MaxAge = 86400 * 14 // 两周
@@ -82,12 +87,12 @@ func (app *WTApp) NewSession(r *http.Request) (*sessions.Session, error) {
 }
 
 // SaveSession
-func (app *WTApp) SaveSession(r *http.Request, w http.ResponseWriter, sess *sessions.Session) error {
+func SaveSession(r *http.Request, w http.ResponseWriter, sess *sessions.Session) error {
 	return sess.Save(r, w)
 }
 
 // DeleteSession
-func (app *WTApp) DeleteSession(r *http.Request, w http.ResponseWriter, sess *sessions.Session) error {
+func DeleteSession(r *http.Request, w http.ResponseWriter, sess *sessions.Session) error {
 	sess.Options.MaxAge = -1
 
 	return sess.Save(r, w)

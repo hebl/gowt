@@ -10,7 +10,7 @@ import (
 	"encoding/gob"
 	"github.com/gorilla/sessions"
 	"gopkg.in/pg.v3"
-	"net/http"
+	//"net/http"
 )
 
 // 全局变量
@@ -43,38 +43,4 @@ func init() {
 
 	//
 	TplPath = "templates/layout.html"
-}
-
-// 改编自 https://github.com/achun/typepress/blob/master/src/global/global.go
-// 获取Session
-func GetSession(r *http.Request) (*sessions.Session, error) {
-	sess, err := SessionStore.Get(r, SessionName)
-	if err != nil { // 如果无，则新建Session Cookie
-		sess, err = NewSession(r)
-	}
-	return sess, err
-}
-
-// NewSession
-func NewSession(r *http.Request) (*sessions.Session, error) {
-	sess, err := SessionStore.New(r, SessionName)
-	if err != nil {
-		sess, err = SessionStore.New(r, SessionName)
-	}
-	sess.Options.HttpOnly = true
-	sess.Options.MaxAge = 86400 * 14 // 两周
-
-	return sess, err
-}
-
-// SaveSession
-func SaveSession(r *http.Request, w http.ResponseWriter, sess *sessions.Session) error {
-	return sess.Save(r, w)
-}
-
-// DeleteSession
-func DeleteSession(r *http.Request, w http.ResponseWriter, sess *sessions.Session) error {
-	sess.Options.MaxAge = -1
-
-	return sess.Save(r, w)
 }

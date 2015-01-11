@@ -1,4 +1,10 @@
 {{ define "content" }}
-<h1>Hello </h1>
-<p></p>
+
+<form method="post">
+<input name="user" value="name"/>
+<input name="passwd" value="pw"/>
+<input type="hidden" name="csrf_token" value="{{ .csrf_token }}"/>
+<input type="submit" />
+</form>
+
 {{ end }}

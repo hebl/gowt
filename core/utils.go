@@ -1,11 +1,11 @@
 package core
 
 import (
-	"crypto/rand"
-	"encoding/base64"
+	"crypto/md5"
 	"fmt"
 	"github.com/gorilla/mux"
 	"net/http"
+	"time"
 )
 
 func RequestInspector(w http.ResponseWriter, r *http.Request) {
@@ -13,7 +13,6 @@ func RequestInspector(w http.ResponseWriter, r *http.Request) {
 }
 
 func GenerateCsrfToken() string {
-	token := make([]byte, 64)
-	rand.Read(token)
-	return base64.StdEncoding.EncodeToString(token)
+	data := string((time.Now().UnixNano() / 1000) % 100000)
+	return fmt.Sprintf("%x", md5.Sum([]byte(data)))
 }
